@@ -11,11 +11,6 @@ namespace Lesson1WebAPI.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
         private readonly List<WeatherForecast> _weatherForecasts;
 
         public WeatherForecastController(List<WeatherForecast> weatherForecasts)
@@ -40,7 +35,18 @@ namespace Lesson1WebAPI.Controllers
 
         [HttpGet]
         public IActionResult Get() =>
-            Ok(_weatherForecasts);
+            Ok(_weatherForecasts.OrderBy(el => el.Date));
+
+        /*
+        [HttpGet]
+        public IActionResult Get([FromQuery] DateTime d1, [FromQuery] DateTime d2)
+        {
+            if (d1 < d2)
+                return Ok(_weatherForecasts.Where(el => el.Date >= d1 && el.Date <= d2).OrderBy(el => el.Date));
+
+            return Ok();
+        }
+        */
 
         [HttpPost]
         public IActionResult Post([FromBody] WeatherForecast weatherForecast)
