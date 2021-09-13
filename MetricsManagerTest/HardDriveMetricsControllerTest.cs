@@ -2,16 +2,21 @@
 using Microsoft.AspNetCore.Mvc;
 using MetricsManager.Controllers;
 using Xunit;
+using Moq;
+using Microsoft.Extensions.Logging;
 
 namespace MetricsManagerTest
 {
     public class HardDriveMetricsControllerTest
     {
         HardDriveMetricsController _controller;
+        Mock<ILogger<HardDriveMetricsController>> _mock;
 
         public HardDriveMetricsControllerTest()
         {
-            _controller = new HardDriveMetricsController();
+            _mock = new Mock<ILogger<HardDriveMetricsController>>();
+
+            _controller = new HardDriveMetricsController(_mock.Object);
         }
 
         [Fact]

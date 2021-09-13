@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Linq;
 using System.Threading.Tasks;
+using MetricsAgent.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,6 +28,11 @@ namespace MetricsAgent
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddSingleton<IRepository<CpuMetric>, CpuMetricRepository<SQLiteConnection>>();
+            services.AddSingleton<IRepository<HardDriveMetric>, HardDriveMetricRepository<SQLiteConnection>>();
+            services.AddSingleton<IRepository<RamMetric>, RamMetricRepository<SQLiteConnection>>();
+            services.AddSingleton<IRepository<NetMetric>, NetMetricRepository<SQLiteConnection>>();
+            services.AddSingleton<IRepository<NetworkMetric>, NetworkMetricRepository<SQLiteConnection>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
