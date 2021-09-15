@@ -2,58 +2,67 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using DB;
+using Entities;
 using MetricsAgent.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace MetricsAgent.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public abstract class BaseMetricsController<T, V> : ControllerBase where T : BaseMetricsController<T, V> where V : BaseMetric, new()
+    public abstract class BaseMetricsController<TLoggerType, VRepositoryType, NCreateRequest> : ControllerBase where TLoggerType : BaseMetricsController<TLoggerType, VRepositoryType, NCreateRequest> where VRepositoryType : BaseMetricEntity, new() where NCreateRequest : BaseMetricCreateRequestDto
     {
-        protected readonly ILogger<T> _logger;
-        protected readonly IRepository<V> _repository;
-        protected BaseMetricsController(ILogger<T> logger, IRepository<V> repository)
+        protected readonly ILogger<TLoggerType> _logger;
+        protected readonly IRepository<VRepositoryType> _repository;
+        protected readonly IMapper _mapper;
+
+        protected BaseMetricsController(ILogger<TLoggerType> logger, IRepository<VRepositoryType> repository, IMapper mapper)
         {
             _logger = logger;
             _repository = repository;
+            _mapper = mapper;
             _logger.LogDebug(1, $"NLog встроен в {GetType().Name}");
         }
 
+        
         [HttpGet("from/{fromTime}/to/{toTime}")]
-        public virtual IActionResult GetMetricsFromAgent([FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
+        public virtual IActionResult GetMetricsFromAgent([FromRoute] DateTime fromTime, [FromRoute] DateTime toTime)
         {
             _logger.LogInformation($"параметры метода (GetMetricsFromAgent)| {nameof(fromTime),8}: {fromTime,12}; {nameof(toTime),8}: {toTime,12};");
             return Ok(_repository.GetAll().Where(metric => metric.Time >= fromTime && metric.Time < toTime).OrderBy(metric => metric.Time));
         }
-
+        
         [HttpGet]
-        public virtual IActionResult GetAll()
+        public virtual async Task<IActionResult> GetAll()
         {
             _logger.LogInformation("вызов метода (GetAll)");
-            return Ok(_repository.GetAll().OrderBy(metric => metric.Time));
+            return Ok(await _repository.GetAll().OrderBy(metric => metric.Time).ToListAsync());
         }
 
+        
         [HttpPost]
-        public virtual IActionResult Post([FromBody] MetricCreateResponse metric)
+        public virtual async Task<IActionResult> Post([FromBody] NCreateRequest metric)
         {
-            _repository.Create(new V() { Value = metric.Value, Time = TimeSpan.FromSeconds(metric.Time) });
+            await _repository.CreateAsync(_mapper.Map<VRepositoryType>(metric));
             return Ok();
         }
-
+          
         [HttpPut]
-        public virtual IActionResult Put([FromBody] V metric)
+        public virtual async Task<IActionResult> Put([FromBody] VRepositoryType metric)
         {
-            _repository.Update(metric);
+            await _repository.UpdateAsync(metric);
             return Ok();
         }
 
         [HttpDelete("{id}")]
-        public virtual IActionResult Delete([FromRoute]int id)
+        public virtual async Task<IActionResult> Delete([FromRoute]int id)
         {
-            _repository.Delete(id);
+            await _repository.DeleteAsync(_mapper.Map<VRepositoryType>(id));
             return Ok();
         }
     }

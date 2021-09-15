@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 
 namespace MetricsAgent.Models
 {
-    public class NetMetric : BaseMetric
+    public abstract class BaseMetricCreateRequestDto
     {
+        public int Value { get; set; }
+        public DateTime Time { get; set; }
     }
 }

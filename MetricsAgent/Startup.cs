@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
 using System.Linq;
 using System.Threading.Tasks;
-using MetricsAgent.Models;
+using AutoMapper;
+using DB;
+using Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -28,11 +30,16 @@ namespace MetricsAgent
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddSingleton<IRepository<CpuMetric>, CpuMetricRepository<SQLiteConnection>>();
-            services.AddSingleton<IRepository<HardDriveMetric>, HardDriveMetricRepository<SQLiteConnection>>();
-            services.AddSingleton<IRepository<RamMetric>, RamMetricRepository<SQLiteConnection>>();
-            services.AddSingleton<IRepository<NetMetric>, NetMetricRepository<SQLiteConnection>>();
-            services.AddSingleton<IRepository<NetworkMetric>, NetworkMetricRepository<SQLiteConnection>>();
+
+            services.AddDbContext<MetricsDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddScoped<IRepository<CpuMetric>, Repository<CpuMetric>>();
+            services.AddScoped<IRepository<HardDriveMetric>, Repository<HardDriveMetric>>();
+            services.AddScoped<IRepository<NetMetric>, Repository<NetMetric>>();
+            services.AddScoped<IRepository<NetworkMetric>, Repository<NetworkMetric>>();
+            services.AddScoped<IRepository<RamMetric>, Repository<RamMetric>>();
+
+            services.AddSingleton(new MapperConfiguration(cfg => cfg.AddProfile<MapperProfile>()).CreateMapper());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

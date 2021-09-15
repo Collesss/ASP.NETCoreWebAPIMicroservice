@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MetricsAgent.Models
 {
-    public class NetworkMetric : BaseMetric
+    public class CpuMetricCreateRequestDto : BaseMetricCreateRequestDto
     {
     }
 }

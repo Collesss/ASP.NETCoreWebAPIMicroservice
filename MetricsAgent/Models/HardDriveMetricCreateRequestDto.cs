@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MetricsAgent.Models
 {
-    public class HardDriveMetric : BaseMetric
+    public class HardDriveMetricCreateRequestDto : BaseMetricCreateRequestDto
     {
     }
 }

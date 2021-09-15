@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MetricsAgent.Models
 {
-    public class RamMetric : BaseMetric
+    public class RamMetricCreateRequestDto : BaseMetricCreateRequestDto
     {
     }
 }
