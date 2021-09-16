@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using DB;
 using Entities;
+using MediatorMetrics;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -14,6 +15,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Quartz;
+using Quartz.Impl;
+using Quartz.Spi;
+using QuarzJob;
 
 namespace MetricsAgent
 {
@@ -39,7 +44,28 @@ namespace MetricsAgent
             services.AddScoped<IRepository<NetworkMetric>, Repository<NetworkMetric>>();
             services.AddScoped<IRepository<RamMetric>, Repository<RamMetric>>();
 
-            services.AddSingleton(new MapperConfiguration(cfg => cfg.AddProfile<MapperProfile>()).CreateMapper());
+            services.AddSingleton(new MapperConfiguration(cfg => {
+                cfg.AddProfile<MapperProfile>();
+                cfg.AddProfile<MapperProfileMediator>();
+            }).CreateMapper());
+
+            
+            
+            services.AddSingleton<INotify, CpuMetricNotify>();
+            services.AddSingleton<INotify, HardDriveMetricNotify>();
+            services.AddSingleton<INotify, NetMetricNotify>();
+            services.AddSingleton<INotify, NetworkMetricNotify>();
+            services.AddSingleton<INotify, RamMetricNotify>();
+
+            
+            services.AddSingleton<IMediator, MetricMediator>();
+            
+            services.AddSingleton<MetricJob>();
+            services.AddSingleton(new JobSchedule(typeof(MetricJob), "0/5 * * * * ?"));
+            services.AddSingleton<IJobFactory, SingletonJobFactory>();
+            services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
+            services.AddHostedService<QuartzHostedService>();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
