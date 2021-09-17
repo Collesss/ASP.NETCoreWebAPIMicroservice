@@ -44,7 +44,7 @@ namespace MetricsAgent.Controllers
             return Ok(await _repository.GetAll().OrderBy(metric => metric.Time).ToListAsync());
         }
 
-        
+        /*
         [HttpPost]
         public virtual async Task<IActionResult> Post([FromBody] NCreateRequest metric)
         {
@@ -65,5 +65,6 @@ namespace MetricsAgent.Controllers
             await _repository.DeleteAsync(_mapper.Map<VRepositoryType>(id));
             return Ok();
         }
+        */
     }
 }
