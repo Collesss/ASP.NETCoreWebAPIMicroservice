@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using AutoMapper;
 using DB;
+using DBMetricsAgent.Extension;
 using Entities;
 using MediatorMetrics;
 using Microsoft.AspNetCore.Builder;
@@ -35,22 +37,15 @@ namespace MetricsAgent
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddHttpClient();
+            
+            services.AddDBMetricsAgent(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddDbContext<MetricsDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
-
-            services.AddScoped<IRepository<CpuMetric>, Repository<CpuMetric>>();
-            services.AddScoped<IRepository<HardDriveMetric>, Repository<HardDriveMetric>>();
-            services.AddScoped<IRepository<NetMetric>, Repository<NetMetric>>();
-            services.AddScoped<IRepository<NetworkMetric>, Repository<NetworkMetric>>();
-            services.AddScoped<IRepository<RamMetric>, Repository<RamMetric>>();
-
-            services.AddSingleton(new MapperConfiguration(cfg => {
+            services.AddAutoMapper(cfg => {
                 cfg.AddProfile<MapperProfile>();
                 cfg.AddProfile<MapperProfileMediator>();
-            }).CreateMapper());
+            });
 
-            
-            
             services.AddSingleton<INotify, CpuMetricNotify>();
             services.AddSingleton<INotify, HardDriveMetricNotify>();
             services.AddSingleton<INotify, NetMetricNotify>();
@@ -59,7 +54,16 @@ namespace MetricsAgent
 
             
             services.AddSingleton<IMediator, MetricMediator>();
-            
+
+            services.AddSingleton<RegisterAgentJob>(ser => 
+                new RegisterAgentJob(
+                    ser.GetService<IHttpClientFactory>(), 
+                    new Uri(Configuration.GetSection("QuartzSection").GetValue<string>("RegisterHost"))
+                    )
+                );
+
+            services.AddSingleton(new JobSchedule(typeof(RegisterAgentJob), "0 0/10 * * * ?"));
+
             services.AddSingleton<MetricJob>();
             services.AddSingleton(new JobSchedule(typeof(MetricJob), "0/5 * * * * ?"));
             services.AddSingleton<IJobFactory, SingletonJobFactory>();

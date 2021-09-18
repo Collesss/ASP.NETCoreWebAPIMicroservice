@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DB\DB.csproj" />
+    <ProjectReference Include="..\DB\DBMetricsAgent.csproj" />
   </ItemGroup>
 
 </Project>
