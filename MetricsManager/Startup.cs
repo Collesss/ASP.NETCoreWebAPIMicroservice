@@ -33,13 +33,18 @@ namespace MetricsManager
             services.AddControllers();
             services.AddHttpClient();
 
-            services.AddAutoMapper(cfg => cfg.AddProfile<MapperProfile>());
+            //services.AddAutoMapper(cfg => cfg.AddProfile<MapperProfile>());
 
-            services.AddDBMetricsManager(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+            AutoMapper.Configuration.MapperConfigurationExpression mapperConfigurationExpression = new AutoMapper.Configuration.MapperConfigurationExpression();
+            mapperConfigurationExpression.AddProfile<MapperProfile>();
+
+            services.AddDBMetricsManager(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")), mapperConfigurationExpression);
 
             services.AddQuartzJobMetricManagerHostedService(
                 Configuration["QuartzSection:CronTimeDelete"], 
                 TimeSpan.FromSeconds(Configuration.GetValue<double>("QuartzSection:TimeDelete")));
+
+            services.AddSingleton(new MapperConfiguration(mapperConfigurationExpression).CreateMapper());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

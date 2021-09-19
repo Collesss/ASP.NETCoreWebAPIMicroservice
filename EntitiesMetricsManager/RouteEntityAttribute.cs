@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 namespace EntitiesMetricsManager
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
-    sealed class RouteEntityAttribute : Attribute
+    public sealed class RouteEntityAttribute : Attribute
     {
         public string Pattern { get; }
         public string LeftStopRegExp { get; }

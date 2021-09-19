@@ -1,16 +1,18 @@
 ﻿using AutoMapper;
 using Entities;
 using EntitiesMetricsManager;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace DBMetricsManager
 {
-    public class RepositryMetricAgents<TEntity> : IRepositoryMetricAgents<TEntity> where TEntity : BaseMetricAgent
+    public class RepositryMetricAgents<TEntity, VBaseMetricEntity> : IRepositoryMetricAgents<TEntity> where TEntity : BaseMetricAgent where VBaseMetricEntity : BaseMetricEntity
     {
         private IRepository<MetricAgent> _repository;
         private IHttpClientFactory _httpClientFactory;
@@ -23,28 +25,58 @@ namespace DBMetricsManager
             _mapper = mapper;
         }
 
-        IEnumerable<TEntity> IRepositoryMetricAgents<TEntity>.GetMetricFromAgent(int id, DateTime from, DateTime to)
+        async Task<IEnumerable<TEntity>> IRepositoryMetricAgents<TEntity>.GetMetricFromAgent(int id, DateTime from, DateTime to)
         {
-            MetricAgent agent = _repository.GetAll().SingleOrDefault(agent => agent.Id == id);
+            MetricAgent agent = await _repository.GetAll().SingleOrDefaultAsync(agent => agent.Id == id);
             //{\w+(?=Agent)}s
-            UriBuilder uriBuilder = new UriBuilder(agent.AddressAgent);
-            
-            uriBuilder.Path = $"api//from/{from.ToString("yyyy-MM-ddTHH:mm:ss.FFFFFFF")}/to{to.ToString("yyyy-MM-ddTHH:mm:ss.FFFFFFF")}";
-            
-            HttpClient client = _httpClientFactory.CreateClient("MetricAgent");
+            if (agent != null)
+            {
+                UriBuilder uriBuilder = new UriBuilder(agent.AddressAgent);
 
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
+                RouteEntityAttribute routeEntityAttribute = (RouteEntityAttribute)Attribute.GetCustomAttribute(typeof(TEntity), typeof(RouteEntityAttribute));
 
-            HttpResponseMessage httpResponse = client.SendAsync(requestMessage).Result;
+                uriBuilder.Path = $"api/{routeEntityAttribute.GetRoute(typeof(TEntity).Name)}/from/{from:yyyy-MM-ddTHH:mm:ss.FFFFFFF}/to/{to:yyyy-MM-ddTHH:mm:ss.FFFFFFF}";
 
-            return JsonSerializer.DeserializeAsync<IEnumerable<BaseMetricEntity>>(httpResponse.Content.ReadAsStreamAsync().Result, new JsonSerializerOptions(JsonSerializerDefaults.Web)).Result
-                .Select(metric => _mapper.Map<BaseMetricEntity, TEntity>(metric, opt => opt.AfterMap((metricBase, metricAgent) => metricAgent.AgentId = id)));
+                HttpClient client = _httpClientFactory.CreateClient("MetricAgent");
 
+                HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
+
+                HttpResponseMessage httpResponse = await client.SendAsync(requestMessage);
+
+                return (await JsonSerializer.DeserializeAsync<VBaseMetricEntity[]>(await httpResponse.Content.ReadAsStreamAsync(), new JsonSerializerOptions(JsonSerializerDefaults.Web)))
+                    .Select(metric => _mapper.Map<VBaseMetricEntity, TEntity>(metric, opt => opt.AfterMap((metricBase, metricAgent) => metricAgent.AgentId = id)));
+            }
+
+            return new TEntity[0];
         }
 
-        IEnumerable<TEntity> IRepositoryMetricAgents<TEntity>.GetMetricFromAgents(DateTime from, DateTime to)
+        async Task<IEnumerable<TEntity>> IRepositoryMetricAgents<TEntity>.GetMetricFromAgents(DateTime from, DateTime to)
         {
-            throw new NotSupportedException();
+            List<MetricAgent> agents = await _repository.GetAll().ToListAsync();
+            //{\w+(?=Agent)}s
+            if (agents.Count > 0)
+            {
+                agents.Select(async agent =>
+                {
+                    UriBuilder uriBuilder = new UriBuilder(agent.AddressAgent);
+
+                    RouteEntityAttribute routeEntityAttribute = (RouteEntityAttribute)Attribute.GetCustomAttribute(typeof(TEntity), typeof(RouteEntityAttribute));
+
+                    uriBuilder.Path = $"api/{routeEntityAttribute.GetRoute(typeof(TEntity).Name)}/from/{from:yyyy-MM-ddTHH:mm:ss.FFFFFFF}/to/{to:yyyy-MM-ddTHH:mm:ss.FFFFFFF}";
+
+                    HttpClient client = _httpClientFactory.CreateClient("MetricAgent");
+
+                    HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
+
+                    HttpResponseMessage httpResponse = await client.SendAsync(requestMessage);
+
+                    return (await JsonSerializer.DeserializeAsync<VBaseMetricEntity[]>(await httpResponse.Content.ReadAsStreamAsync(), new JsonSerializerOptions(JsonSerializerDefaults.Web)))
+                            .Select(metric => _mapper.Map<VBaseMetricEntity, TEntity>(metric, opt => opt.AfterMap((metricBase, metricAgent) => metricAgent.AgentId = agent.Id)));
+                }).ToArray()
+                    .SelectMany(metricsAgent => metricsAgent.Result).ToArray();
+            }
+
+            return new TEntity[0];
         }
     }
 }
