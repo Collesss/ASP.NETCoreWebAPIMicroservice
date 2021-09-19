@@ -12,7 +12,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "api/CpuMetrics/from/00:00:00/to/00:01:41",
+      "launchUrl": "api/CpuMetrics/from/00:00:00/to/23:59:59",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -20,7 +20,7 @@
     "MetricsAgent": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/CpuMetrics/from/00:00:00/to/00:01:41",
+      "launchUrl": "api/CpuMetrics/from/00:00:00/to/23:59:59",
       "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

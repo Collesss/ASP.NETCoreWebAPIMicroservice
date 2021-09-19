@@ -17,7 +17,7 @@
     <PackageReference Include="Quartz" Version="3.3.3" />
     <ProjectReference Include="..\DB\DBMetricsAgent.csproj" />
     <ProjectReference Include="..\MediatorMetrics\MediatorMetrics.csproj" />
-    <ProjectReference Include="..\QuarzJob\QuarzJob.csproj" />
+    <ProjectReference Include="..\QuarzJob\QuartzJobMetricAgent.csproj" />
     <Content Update="nlog.config" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 

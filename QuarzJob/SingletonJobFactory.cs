@@ -3,6 +3,7 @@ using Quartz;
 using Quartz.Spi;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace QuarzJob
@@ -18,7 +19,8 @@ namespace QuarzJob
 
         IJob IJobFactory.NewJob(TriggerFiredBundle bundle, IScheduler scheduler)
         {
-            return _serviceProvider.GetRequiredService(bundle.JobDetail.JobType) as IJob;
+            return _serviceProvider.GetServices<IJob>().Single(job => job.GetType() == bundle.JobDetail.JobType);
+            //return _serviceProvider.GetRequiredService(bundle.JobDetail.JobType) as IJob;
         }
 
         void IJobFactory.ReturnJob(IJob job)

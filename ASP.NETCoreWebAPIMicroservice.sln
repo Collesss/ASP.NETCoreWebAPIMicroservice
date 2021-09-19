@@ -19,11 +19,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntitiesMetricsAgent", "Ent
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediatorMetrics", "MediatorMetrics\MediatorMetrics.csproj", "{741A386D-9653-4D9B-8B37-58F5E55E57BB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuarzJob", "QuarzJob\QuarzJob.csproj", "{D7AFE4DE-3500-4D85-A858-ACA65B3371E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuartzJobMetricAgent", "QuarzJob\QuartzJobMetricAgent.csproj", "{D7AFE4DE-3500-4D85-A858-ACA65B3371E5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DBMetricsManager", "DBMetricsManager\DBMetricsManager.csproj", "{BC15342B-CB5B-4E77-87AB-229484D245E6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntitiesMetricsManager", "EntitiesMetricsManager\EntitiesMetricsManager.csproj", "{9132E79A-BD3E-4F2F-8E2F-FEB810B4E199}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuartzJobMetricManager", "QuartzJobMetricManager\QuartzJobMetricManager.csproj", "{89B7FDC9-3CFF-4605-848C-71C37E3E3818}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +73,10 @@ Global
 		{9132E79A-BD3E-4F2F-8E2F-FEB810B4E199}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9132E79A-BD3E-4F2F-8E2F-FEB810B4E199}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9132E79A-BD3E-4F2F-8E2F-FEB810B4E199}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89B7FDC9-3CFF-4605-848C-71C37E3E3818}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89B7FDC9-3CFF-4605-848C-71C37E3E3818}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89B7FDC9-3CFF-4605-848C-71C37E3E3818}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89B7FDC9-3CFF-4605-848C-71C37E3E3818}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -86,6 +92,7 @@ Global
 		{D7AFE4DE-3500-4D85-A858-ACA65B3371E5} = {4E3D1F3B-B500-4EB9-858E-68CDF52FCAC8}
 		{BC15342B-CB5B-4E77-87AB-229484D245E6} = {4E3D1F3B-B500-4EB9-858E-68CDF52FCAC8}
 		{9132E79A-BD3E-4F2F-8E2F-FEB810B4E199} = {4E3D1F3B-B500-4EB9-858E-68CDF52FCAC8}
+		{89B7FDC9-3CFF-4605-848C-71C37E3E3818} = {4E3D1F3B-B500-4EB9-858E-68CDF52FCAC8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BEA43A5B-58A1-41E4-9D5C-9C8F704A5E01}

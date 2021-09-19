@@ -20,6 +20,7 @@ using Microsoft.Extensions.Logging;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Spi;
+using QuartzJob.Extension;
 using QuarzJob;
 
 namespace MetricsAgent
@@ -41,35 +42,12 @@ namespace MetricsAgent
             
             services.AddDBMetricsAgent(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddAutoMapper(cfg => {
-                cfg.AddProfile<MapperProfile>();
-                cfg.AddProfile<MapperProfileMediator>();
-            });
-
-            services.AddSingleton<INotify, CpuMetricNotify>();
-            services.AddSingleton<INotify, HardDriveMetricNotify>();
-            services.AddSingleton<INotify, NetMetricNotify>();
-            services.AddSingleton<INotify, NetworkMetricNotify>();
-            services.AddSingleton<INotify, RamMetricNotify>();
-
+            AutoMapper.Configuration.MapperConfigurationExpression mapperConfigurationExpression = new AutoMapper.Configuration.MapperConfigurationExpression();
+            mapperConfigurationExpression.AddProfile<MapperProfile>();
             
-            services.AddSingleton<IMediator, MetricMediator>();
+            services.AddQuartzJobMetricAgentHostedService(mapperConfigurationExpression, Configuration["QuartzSection:RegisterHost"]);
 
-            services.AddSingleton<RegisterAgentJob>(ser => 
-                new RegisterAgentJob(
-                    ser.GetService<IHttpClientFactory>(), 
-                    new Uri(Configuration.GetSection("QuartzSection").GetValue<string>("RegisterHost"))
-                    )
-                );
-
-            services.AddSingleton(new JobSchedule(typeof(RegisterAgentJob), "0 0/10 * * * ?"));
-
-            services.AddSingleton<MetricJob>();
-            services.AddSingleton(new JobSchedule(typeof(MetricJob), "0/5 * * * * ?"));
-            services.AddSingleton<IJobFactory, SingletonJobFactory>();
-            services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
-            services.AddHostedService<QuartzHostedService>();
-            
+            services.AddSingleton(new MapperConfiguration(mapperConfigurationExpression).CreateMapper());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
