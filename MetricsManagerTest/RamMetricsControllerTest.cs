@@ -16,15 +16,15 @@ namespace MetricsManagerTest
         {
             _mock = new Mock<ILogger<RamMetricsController>>();
 
-            _controller = new RamMetricsController(_mock.Object);
+            //_controller = new RamMetricsController(_mock.Object);
         }
 
         [Fact]
         public void GetMetricsFromAgentTest()
         {
             var agentId = 1;
-            var fromTime = new TimeSpan(1, 2, 3, 4);
-            var toTime = new TimeSpan(10, 20, 30, 40);
+            var fromTime = new DateTime(1, 2, 3);
+            var toTime = new DateTime(10, 2, 30);
 
             var result = _controller.GetMetricsFromAgent(agentId, fromTime, toTime);
 
@@ -34,10 +34,10 @@ namespace MetricsManagerTest
         [Fact]
         public void GetMetricsFromAllCluster()
         {
-            var fromTime = new TimeSpan(1, 2, 3, 4);
-            var toTime = new TimeSpan(10, 20, 30, 40);
+            var fromTime = new DateTime(1, 2, 3);
+            var toTime = new DateTime(10, 2, 30);
 
-            var result = _controller.GetMetricsFromAllCluster(fromTime, toTime);
+            var result = _controller.GetMetricsFromAllCluster(fromTime, toTime).Result;
 
             Assert.IsAssignableFrom<IActionResult>(result);
         }

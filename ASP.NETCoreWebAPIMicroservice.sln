@@ -25,7 +25,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DBMetricsManager", "DBMetri
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntitiesMetricsManager", "EntitiesMetricsManager\EntitiesMetricsManager.csproj", "{9132E79A-BD3E-4F2F-8E2F-FEB810B4E199}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuartzJobMetricManager", "QuartzJobMetricManager\QuartzJobMetricManager.csproj", "{89B7FDC9-3CFF-4605-848C-71C37E3E3818}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuartzJobMetricManager", "QuartzJobMetricManager\QuartzJobMetricManager.csproj", "{89B7FDC9-3CFF-4605-848C-71C37E3E3818}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication1TestEF", "WebApplication1TestEF\WebApplication1TestEF.csproj", "{24955C46-002C-40EE-B06A-D600059D3892}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,6 +79,10 @@ Global
 		{89B7FDC9-3CFF-4605-848C-71C37E3E3818}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89B7FDC9-3CFF-4605-848C-71C37E3E3818}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89B7FDC9-3CFF-4605-848C-71C37E3E3818}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24955C46-002C-40EE-B06A-D600059D3892}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24955C46-002C-40EE-B06A-D600059D3892}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24955C46-002C-40EE-B06A-D600059D3892}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24955C46-002C-40EE-B06A-D600059D3892}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
