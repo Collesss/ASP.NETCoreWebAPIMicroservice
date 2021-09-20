@@ -29,8 +29,9 @@ namespace WebApplication1TestEF.Controllers
             return Ok(_dbContext.MetricAgents.AsQueryable().ToList());
         }
 
+        /*
         [HttpPost]
-        public IActionResult Create([FromBody]MetricAgentCreateRequestDto CreateRequestDto)
+        public IActionResult Create([FromBody] MetricAgentCreateOrUpdateRequestDto CreateRequestDto)
         {
             var res = _dbContext.MetricAgents.Add(_mapper.Map<MetricAgent>(CreateRequestDto));
 
@@ -44,11 +45,26 @@ namespace WebApplication1TestEF.Controllers
         {
             var res = _dbContext.MetricAgents.Update(_mapper.Map<MetricAgent>(CreateRequestDto));
 
-            
+            //_dbContext.MetricAgents.Attach
 
             var c = _dbContext.SaveChanges();
 
             return Ok(res.Entity);
+        }
+        */
+
+        [HttpPost("RegOrUpd")]
+        public IActionResult CreateOrUpdate([FromBody] MetricAgentCreateOrUpdateRequestDto createRequestDto)
+        {
+            MetricAgent metricAgent = _mapper.Map<MetricAgentCreateOrUpdateRequestDto, MetricAgent>(createRequestDto, opts => opts.AfterMap((source, dest) => {
+                dest.Id = _dbContext.MetricAgents.SingleOrDefault(agent => agent.AddressAgent == source.AddressAgent)?.Id ?? 0;
+                dest.LastUpdateTime = DateTime.Now;
+            }));
+            
+            var res = _dbContext.MetricAgents.Update(metricAgent);
+            _dbContext.SaveChanges();
+
+            return Ok(_mapper.Map<MetricAgentCreateOrUpdateResponseDto>(res));
         }
     }
 }

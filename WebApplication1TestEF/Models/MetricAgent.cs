@@ -9,5 +9,6 @@ namespace WebApplication1TestEF.Models
     {
         public Uri AddressAgent { get; set; }
         public DateTime LastUpdateTime { get; set; }
+        public int TestValue { get; set; }
     }
 }

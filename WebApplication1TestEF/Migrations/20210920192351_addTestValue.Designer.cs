@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WebApplication1TestEF.Models.DbContextAndRepository;
@@ -9,9 +10,10 @@ using WebApplication1TestEF.Models.DbContextAndRepository;
 namespace WebApplication1TestEF.Migrations
 {
     [DbContext(typeof(WebApplication1TestEFDbContext))]
-    partial class WebApplication1TestEFDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210920192351_addTestValue")]
+    partial class addTestValue
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

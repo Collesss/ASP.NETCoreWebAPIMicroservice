@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 
 namespace WebApplication1TestEF.Models.Dto
 {
-    public class MetricAgentUpdateRequestDto
+    public class MetricAgentCreateOrUpdateRequestDto
     {
-        public int Id { get; set; }
         public Uri AddressAgent { get; set; }
-        public DateTime LastUpdateTime { get; set; }
+        public int TestValue { get; set; }
     }
 }
