@@ -12,8 +12,8 @@ namespace MetricsManager
     {
         public MapperProfile()
         {
-            CreateMap<AgentCreateRequestDto, MetricAgent>()
-                .ForMember("LastUpdateTime", opt => opt.MapFrom(src => DateTime.Now));
+            CreateMap<AgentCreateOrUpdateRequestDto, MetricAgent>();
+                //.ForMember("LastUpdateTime", opt => opt.MapFrom(src => DateTime.Now));
         }
     }
 }

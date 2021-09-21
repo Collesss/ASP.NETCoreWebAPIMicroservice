@@ -31,9 +31,10 @@ namespace MetricsManager.Controllers
             return Ok(await _repository.GetAll().OrderBy(ord => ord.Id).ToListAsync());
         }
 
-        [HttpPost("registerOrUpdate")]
-        public async Task<IActionResult> RegisterOrUpdateAgent([FromBody] AgentCreateRequestDto agentCreateDto)
+        [HttpPost("RegOrUpd")]
+        public async Task<IActionResult> RegisterOrUpdateAgent([FromBody] AgentCreateOrUpdateRequestDto agentCreateDto)
         {
+            /*
             MetricAgent agent = await _repository.GetAll().SingleOrDefaultAsync(agent => agent.AddressAgent == agentCreateDto.AddressAgent);
             if (agent is null)
                 await _repository.CreateAsync(_mapper.Map<MetricAgent>(agentCreateDto));
@@ -42,7 +43,12 @@ namespace MetricsManager.Controllers
                 agent.LastUpdateTime = DateTime.Now;
                 await _repository.UpdateAsync(agent);
             }
-            return Ok();
+            */
+
+            MetricAgent metricAgent = await _repository.GetAll().FirstOrDefaultAsync(agent => agent.AddressAgent == agentCreateDto.AddressAgent) ?? await _repository.CreateAsync(_mapper.Map<MetricAgent>(agentCreateDto));
+            metricAgent.LastUpdateTime = DateTime.Now;
+
+            return Ok(await _repository.UpdateAsync(metricAgent));
         }
 
         /*

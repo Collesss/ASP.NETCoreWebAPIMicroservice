@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MetricsManager.Models
 {
-    public class AgentCreateRequestDto
+    public class AgentCreateOrUpdateRequestDto
     {
         public Uri AddressAgent { get; set; }
     }

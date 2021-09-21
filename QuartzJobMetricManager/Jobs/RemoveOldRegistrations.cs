@@ -30,10 +30,8 @@ namespace QuartzJobMetricManager
             using (IServiceScope scope = _serviceProvider.CreateScope())
             {
                 IRepository<MetricAgent> repository = scope.ServiceProvider.GetService<IRepository<MetricAgent>>();
-                
-                await Task.WhenAll(
-                    (await repository.GetAll().Where(agent => agent.LastUpdateTime < dateTimeDelete)
-                    .ToListAsync(context.CancellationToken)).Select(agent => repository.DeleteAsync(agent)).ToArray());
+
+                await repository.DeleteRangeAsync(repository.GetAll().Where(agent => agent.LastUpdateTime < dateTimeDelete));
             }
         }
     }

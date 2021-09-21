@@ -10,8 +10,9 @@ namespace DBMetricsManager
     public interface IRepository<TEntity> where TEntity : BaseEntity
     {
         IQueryable<TEntity> GetAll();
-        Task CreateAsync(TEntity entity);
-        Task UpdateAsync(TEntity entity);
-        Task DeleteAsync(TEntity entity);
+        Task<TEntity> CreateAsync(TEntity entity);
+        Task<TEntity> UpdateAsync(TEntity entity);
+        Task<TEntity> DeleteAsync(TEntity entity);
+        Task DeleteRangeAsync(IEnumerable<TEntity> entity);
     }
 }
