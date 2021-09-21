@@ -56,15 +56,22 @@ namespace WebApplication1TestEF.Controllers
         [HttpPost("RegOrUpd")]
         public IActionResult CreateOrUpdate([FromBody] MetricAgentCreateOrUpdateRequestDto createRequestDto)
         {
+            /*
+            //не работает
             MetricAgent metricAgent = _mapper.Map<MetricAgentCreateOrUpdateRequestDto, MetricAgent>(createRequestDto, opts => opts.AfterMap((source, dest) => {
-                dest.Id = _dbContext.MetricAgents.SingleOrDefault(agent => agent.AddressAgent == source.AddressAgent)?.Id ?? 0;
+                dest.Id = _dbContext.MetricAgents.SingleOrDefault(agent => agent.AddressAgent == createRequestDto.AddressAgent).Id;
                 dest.LastUpdateTime = DateTime.Now;
             }));
-            
-            var res = _dbContext.MetricAgents.Update(metricAgent);
+            */
+
+            MetricAgent metricAgent =   _dbContext.MetricAgents.SingleOrDefault(agent => agent.AddressAgent == createRequestDto.AddressAgent) ?? 
+                                        _dbContext.MetricAgents.Add(_mapper.Map<MetricAgent>(createRequestDto)).Entity;
+
+            metricAgent.LastUpdateTime = DateTime.Now;
+            //var res = _dbContext.MetricAgents.Update(metricAgent);
             _dbContext.SaveChanges();
 
-            return Ok(_mapper.Map<MetricAgentCreateOrUpdateResponseDto>(res));
+            return Ok(_mapper.Map<MetricAgentCreateOrUpdateResponseDto>(metricAgent));
         }
     }
 }

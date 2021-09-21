@@ -14,9 +14,14 @@ namespace WebApplication1TestEF
         public AutoMapperProfile()
         {
             CreateMap<MetricAgentCreateOrUpdateRequestDto, MetricAgent>();
-            CreateMap<EntityEntry<MetricAgent>, MetricAgentCreateOrUpdateResponseDto>()
-                .ForMember(response => response.MetricAgent, opts => opts.MapFrom(source => source.Entity))
-                .ForMember(response => response.State, opts => opts.MapFrom(source => source.State));
+            CreateMap<MetricAgent, MetricAgentCreateOrUpdateResponseDto>();
+                //.ForMember(response => response.MetricAgent, opts => opts.MapFrom(source => source.Entity))
+                //.ForMember(response => response.State, opts => opts.MapFrom(source => source.State));
+
+            /*
+            CreateMap<MetricAgent, MetricAgentCreateOrUpdateResponseDto>()
+                .ForMember(response => response.MetricAgent, opts => opts.MapFrom(source => source));
+            */
         }
     }
 }

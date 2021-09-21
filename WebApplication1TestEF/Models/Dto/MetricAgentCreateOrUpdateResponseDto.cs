@@ -8,8 +8,9 @@ namespace WebApplication1TestEF.Models.Dto
 {
     public class MetricAgentCreateOrUpdateResponseDto
     {
-        public MetricAgent MetricAgent { get; set; }
-
-        public EntityState State { get; set; }
+        public int Id { get; set; }
+        public Uri AddressAgent { get; set; }
+        public DateTime LastUpdateTime { get; set; }
+        public int TestValue { get; set; }
     }
 }
