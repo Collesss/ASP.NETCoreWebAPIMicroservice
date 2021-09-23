@@ -19,11 +19,11 @@ namespace DBMetricsManager
 
             serviceCollection.AddScoped<IRepository<MetricAgent>, Repository<MetricAgent>>();
 
-            serviceCollection.AddScoped<IRepositoryMetricAgents<CpuMetricAgent>, RepositryMetricAgents<CpuMetricAgent, CpuMetric>>();
-            serviceCollection.AddScoped<IRepositoryMetricAgents<HardDriveMetricAgent>, RepositryMetricAgents<HardDriveMetricAgent, HardDriveMetric>>();
-            serviceCollection.AddScoped<IRepositoryMetricAgents<NetMetricAgent>, RepositryMetricAgents<NetMetricAgent, NetMetric>>();
-            serviceCollection.AddScoped<IRepositoryMetricAgents<NetworkMetricAgent>, RepositryMetricAgents<NetworkMetricAgent, NetworkMetric>>();
-            serviceCollection.AddScoped<IRepositoryMetricAgents<RamMetricAgent>, RepositryMetricAgents<RamMetricAgent, RamMetric>>();
+            serviceCollection.AddScoped<IRepositoryMetricAgents<CpuMetricAgent>, RepositoryMetricAgentsCpu>();
+            serviceCollection.AddScoped<IRepositoryMetricAgents<HardDriveMetricAgent>, RepositoryMetricAgentsHardDrive>();
+            serviceCollection.AddScoped<IRepositoryMetricAgents<NetMetricAgent>, RepositoryMetricAgentsNet>();
+            serviceCollection.AddScoped<IRepositoryMetricAgents<NetworkMetricAgent>, RepositoryMetricAgentsNetwork>();
+            serviceCollection.AddScoped<IRepositoryMetricAgents<RamMetricAgent>, RepositoryMetricAgentsRam>();
         }
     }
 }
