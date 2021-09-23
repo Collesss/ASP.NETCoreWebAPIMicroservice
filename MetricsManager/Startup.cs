@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Polly;
 using QuartzJobMetricManager.Extension;
 
 namespace MetricsManager
@@ -31,8 +32,10 @@ namespace MetricsManager
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddHttpClient();
-
+            services.AddHttpClient("MetricAgent")
+                .AddTransientHttpErrorPolicy(p => 
+                p.WaitAndRetryAsync(3, _ => TimeSpan.FromMilliseconds(1000)));
+            
             //services.AddAutoMapper(cfg => cfg.AddProfile<MapperProfile>());
 
             AutoMapper.Configuration.MapperConfigurationExpression mapperConfigurationExpression = new AutoMapper.Configuration.MapperConfigurationExpression();

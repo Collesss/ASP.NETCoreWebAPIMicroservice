@@ -17,6 +17,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Polly;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Spi;
@@ -38,7 +39,9 @@ namespace MetricsAgent
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddHttpClient();
+            services.AddHttpClient("RegisterAgent")
+                .AddTransientHttpErrorPolicy(p => 
+                p.WaitAndRetryAsync(3, _ => TimeSpan.FromMilliseconds(1000)));
             
             services.AddDBMetricsAgent(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
