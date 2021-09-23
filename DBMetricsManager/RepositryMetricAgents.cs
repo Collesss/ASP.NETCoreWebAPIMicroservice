@@ -25,23 +25,28 @@ namespace DBMetricsManager
             _mapper = mapper;
         }
 
+        private HttpRequestMessage GetRequestMessage(MetricAgent metricAgent, DateTime from, DateTime to)
+        {
+            UriBuilder uriBuilder = new UriBuilder(metricAgent.AddressAgent);
+
+            RouteEntityAttribute routeEntityAttribute = (RouteEntityAttribute)Attribute.GetCustomAttribute(typeof(TEntity), typeof(RouteEntityAttribute));
+
+            uriBuilder.Path = $"api/{routeEntityAttribute.GetRoute(typeof(TEntity).Name)}/from/{from:yyyy-MM-ddTHH:mm:ss.FFFFFFF}/to/{to:yyyy-MM-ddTHH:mm:ss.FFFFFFF}";
+
+            return new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
+        }
+
         async Task<IEnumerable<TEntity>> IRepositoryMetricAgents<TEntity>.GetMetricFromAgent(int id, DateTime from, DateTime to)
         {
             MetricAgent agent = await _repository.GetAll().SingleOrDefaultAsync(agent => agent.Id == id);
+            
+            HttpClient client = _httpClientFactory.CreateClient("MetricAgent");
+            
+            HttpResponseMessage httpResponse;
+
             //{\w+(?=Agent)}s
-            if (agent != null)
+            if (agent != null && (httpResponse = await client.SendAsync(GetRequestMessage(agent, from, to))).IsSuccessStatusCode)
             {
-                UriBuilder uriBuilder = new UriBuilder(agent.AddressAgent);
-
-                RouteEntityAttribute routeEntityAttribute = (RouteEntityAttribute)Attribute.GetCustomAttribute(typeof(TEntity), typeof(RouteEntityAttribute));
-
-                uriBuilder.Path = $"api/{routeEntityAttribute.GetRoute(typeof(TEntity).Name)}/from/{from:yyyy-MM-ddTHH:mm:ss.FFFFFFF}/to/{to:yyyy-MM-ddTHH:mm:ss.FFFFFFF}";
-
-                HttpClient client = _httpClientFactory.CreateClient("MetricAgent");
-
-                HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
-
-                HttpResponseMessage httpResponse = await client.SendAsync(requestMessage);
 
                 return (await JsonSerializer.DeserializeAsync<VBaseMetricEntity[]>(await httpResponse.Content.ReadAsStreamAsync(), new JsonSerializerOptions(JsonSerializerDefaults.Web)))
                     .Select(metric => _mapper.Map<VBaseMetricEntity, TEntity>(metric, opt => opt.AfterMap((metricBase, metricAgent) => metricAgent.AgentId = id)));
@@ -54,29 +59,17 @@ namespace DBMetricsManager
         {
             List<MetricAgent> agents = await _repository.GetAll().ToListAsync();
             //{\w+(?=Agent)}s
-            if (agents.Count > 0)
+
+            return agents.Select(async agent =>
             {
-                agents.Select(async agent =>
-                {
-                    UriBuilder uriBuilder = new UriBuilder(agent.AddressAgent);
+                HttpClient client = _httpClientFactory.CreateClient("MetricAgent");
 
-                    RouteEntityAttribute routeEntityAttribute = (RouteEntityAttribute)Attribute.GetCustomAttribute(typeof(TEntity), typeof(RouteEntityAttribute));
+                HttpResponseMessage httpResponse = await client.SendAsync(GetRequestMessage(agent, from, to));
 
-                    uriBuilder.Path = $"api/{routeEntityAttribute.GetRoute(typeof(TEntity).Name)}/from/{from:yyyy-MM-ddTHH:mm:ss.FFFFFFF}/to/{to:yyyy-MM-ddTHH:mm:ss.FFFFFFF}";
-
-                    HttpClient client = _httpClientFactory.CreateClient("MetricAgent");
-
-                    HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, uriBuilder.Uri);
-
-                    HttpResponseMessage httpResponse = await client.SendAsync(requestMessage);
-
-                    return (await JsonSerializer.DeserializeAsync<VBaseMetricEntity[]>(await httpResponse.Content.ReadAsStreamAsync(), new JsonSerializerOptions(JsonSerializerDefaults.Web)))
-                            .Select(metric => _mapper.Map<VBaseMetricEntity, TEntity>(metric, opt => opt.AfterMap((metricBase, metricAgent) => metricAgent.AgentId = agent.Id)));
-                }).ToArray()
-                    .SelectMany(metricsAgent => metricsAgent.Result).ToArray();
-            }
-
-            return new TEntity[0];
+                return httpResponse.IsSuccessStatusCode ? (await JsonSerializer.DeserializeAsync<VBaseMetricEntity[]>(await httpResponse.Content.ReadAsStreamAsync(), new JsonSerializerOptions(JsonSerializerDefaults.Web)))
+                        .Select(metric => _mapper.Map<VBaseMetricEntity, TEntity>(metric, opt => opt.AfterMap((metricBase, metricAgent) => metricAgent.AgentId = agent.Id))) : new TEntity[0];
+            }).ToArray()
+                .SelectMany(metricsAgent => metricsAgent.Result);
         }
     }
 }
