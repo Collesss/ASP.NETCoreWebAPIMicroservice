@@ -24,13 +24,22 @@ namespace MetricsManager.Controllers
             _repository = repository;
             _mapper = mapper;
         }
-
+        
+        /// <summary>
+        /// Получает всех зарегистрированных агентов
+        /// </summary>
+        /// <returns>Список агентов которые были зарегистрированны.</returns>
         [HttpGet]
         public async Task<IActionResult> GetAgents()
         {
             return Ok(await _repository.GetAll().OrderBy(ord => ord.Id).ToListAsync());
         }
 
+        /// <summary>
+        /// Регистрирует или обновляет запись о регистрации агента
+        /// </summary>
+        /// <param name="agentCreateDto">путь к агенту</param>
+        /// <returns></returns>
         [HttpPost("RegOrUpd")]
         public async Task<IActionResult> RegisterOrUpdateAgent([FromBody] AgentCreateOrUpdateRequestDto agentCreateDto)
         {

@@ -31,14 +31,14 @@ namespace MetricsAgent.Controllers
 
         
         [HttpGet("from/{fromTime}/to/{toTime}")]
-        public virtual IActionResult GetMetricsFromAgent([FromRoute] DateTime fromTime, [FromRoute] DateTime toTime)
+        public virtual async Task<IActionResult> GetMetricsFromAgent([FromRoute] DateTime fromTime, [FromRoute] DateTime toTime)
         {
             _logger.LogInformation($"параметры метода (GetMetricsFromAgent)| {nameof(fromTime),8}: {fromTime,12}; {nameof(toTime),8}: {toTime,12};");
-            return Ok(_repository.GetAll().Where(metric => metric.Time >= fromTime && metric.Time < toTime).OrderBy(metric => metric.Time));
+            return Ok(await _repository.GetAll().Where(metric => metric.Time >= fromTime && metric.Time < toTime).OrderBy(metric => metric.Time).ToListAsync());
         }
         
         [HttpGet]
-        public virtual async Task<IActionResult> GetAll()
+        public virtual async Task<IActionResult> GetAllMetricsFromAgent()
         {
             _logger.LogInformation("вызов метода (GetAll)");
             return Ok(await _repository.GetAll().OrderBy(metric => metric.Time).ToListAsync());
