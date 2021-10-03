@@ -5,7 +5,7 @@ using System.Text;
 
 namespace QuartzJobMetricManager
 {
-    public class JobSchedule
+    public class JobSchedule : IJobSchedule
     {
         public Type Type { get; }
         public string CronExpression { get; }

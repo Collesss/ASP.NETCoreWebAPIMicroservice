@@ -13,11 +13,11 @@ namespace QuartzJobMetricManager
     {
         private readonly IJobFactory _jobFactory;
         private readonly ISchedulerFactory _schedulerFactory;
-        private readonly IEnumerable<JobSchedule> _jobSchedules;
+        private readonly IEnumerable<IJobSchedule> _jobSchedules;
 
         private IScheduler Scheduler { get; set; }
 
-        public QuartzHostedService(IJobFactory jobFactory, ISchedulerFactory schedulerFactory, IEnumerable<JobSchedule> jobSchedules)
+        public QuartzHostedService(IJobFactory jobFactory, ISchedulerFactory schedulerFactory, IEnumerable<IJobSchedule> jobSchedules)
         {
             _jobFactory = jobFactory;
             _schedulerFactory = schedulerFactory;

@@ -15,7 +15,7 @@ namespace QuartzJobMetricManager.Extension
         public static void AddQuartzJobMetricManagerHostedService(this IServiceCollection serviceCollection, string cronTimeDelete, TimeSpan timeDelete)
         {
             serviceCollection.AddSingleton<IJob>(src => new RemoveOldRegistrations(src, timeDelete));
-            serviceCollection.AddSingleton(new JobSchedule(typeof(RemoveOldRegistrations), cronTimeDelete));
+            serviceCollection.AddSingleton<IJobSchedule>(new JobSchedule(typeof(RemoveOldRegistrations), cronTimeDelete));
 
             serviceCollection.AddSingleton<IJobFactory, SingletonJobFactory>();
             serviceCollection.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();

@@ -24,7 +24,7 @@ using Polly;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Spi;
-using QuartzJob.Extension;
+using QuartzJobMetricAgent.Extension;
 using QuarzJob;
 
 namespace MetricsAgent

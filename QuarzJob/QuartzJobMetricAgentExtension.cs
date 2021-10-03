@@ -11,7 +11,7 @@ using System.Configuration;
 using System.Net.Http;
 using System.Text;
 
-namespace QuartzJob.Extension
+namespace QuartzJobMetricAgent.Extension
 {
     public static class QuartzJobMetricAgentExtension
     {
@@ -20,10 +20,10 @@ namespace QuartzJob.Extension
             serviceCollection.AddMediatorMetrics(mapperConfigurationExpression);
 
             serviceCollection.AddSingleton<IJob>(ser => new RegisterAgentJob(ser.GetService<IHttpClientFactory>(), new Uri(RegisterHost)));
-            serviceCollection.AddSingleton(new JobSchedule(typeof(RegisterAgentJob), "0 0/10 * * * ?"));
+            serviceCollection.AddSingleton<IJobSchedule>(new JobSchedule(typeof(RegisterAgentJob), "0 0/10 * * * ?"));
 
             serviceCollection.AddSingleton<IJob, MetricJob>();
-            serviceCollection.AddSingleton(new JobSchedule(typeof(MetricJob), "0/5 * * * * ?"));
+            serviceCollection.AddSingleton<IJobSchedule>(new JobSchedule(typeof(MetricJob), "0/5 * * * * ?"));
 
             serviceCollection.AddSingleton<IJobFactory, SingletonJobFactory>();
             serviceCollection.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();

@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace QuarzJob
+namespace QuartzJobMetricAgent
 {
-    public class JobSchedule
+    public class JobSchedule : IJobSchedule
     {
         public Type Type { get; }
         public string CronExpression { get; }
