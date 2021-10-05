@@ -20,7 +20,7 @@ namespace QuartzJobMetricAgent.Extension
             serviceCollection.AddMediatorMetrics(mapperConfigurationExpression);
 
             serviceCollection.AddSingleton<IJob>(ser => new RegisterAgentJob(ser.GetService<IHttpClientFactory>(), new Uri(RegisterHost)));
-            serviceCollection.AddSingleton<IJobSchedule>(new JobSchedule(typeof(RegisterAgentJob), "0 0/10 * * * ?"));
+            serviceCollection.AddSingleton<IJobSchedule>(new JobSchedule(typeof(RegisterAgentJob), "0/29 * * * * ?"));
 
             serviceCollection.AddSingleton<IJob, MetricJob>();
             serviceCollection.AddSingleton<IJobSchedule>(new JobSchedule(typeof(MetricJob), "0/5 * * * * ?"));

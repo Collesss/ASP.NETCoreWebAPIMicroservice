@@ -43,6 +43,7 @@ namespace MetricsManager.Controllers
         [HttpPost("RegOrUpd")]
         public async Task<IActionResult> RegisterOrUpdateAgent([FromBody] AgentCreateOrUpdateRequestDto agentCreateDto)
         {
+            //HttpContext httpContext = HttpContext;
             /*
             MetricAgent agent = await _repository.GetAll().SingleOrDefaultAsync(agent => agent.AddressAgent == agentCreateDto.AddressAgent);
             if (agent is null)
