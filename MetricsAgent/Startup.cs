@@ -51,7 +51,10 @@ namespace MetricsAgent
             AutoMapper.Configuration.MapperConfigurationExpression mapperConfigurationExpression = new AutoMapper.Configuration.MapperConfigurationExpression();
             mapperConfigurationExpression.AddProfile<MapperProfile>();
             
-            services.AddQuartzJobMetricAgentHostedService(mapperConfigurationExpression, Configuration["QuartzSection:RegisterHost"]);
+            services.AddQuartzJobMetricAgentHostedService(
+                mapperConfigurationExpression, 
+                new Uri(Configuration["QuartzSection:RegisterHost"]),
+                new UriBuilder(Uri.UriSchemeHttps, Configuration["COMPUTERNAME"], Configuration.GetValue<int>("ASPNETCORE_HTTPS_PORT")).Uri);
 
             services.AddSingleton(new MapperConfiguration(mapperConfigurationExpression).CreateMapper());
 
